@@ -1,0 +1,55 @@
+import time
+import random
+import threading
+from datetime import datetime
+
+class SCMSystem:
+    def __init__(self):
+        self.orders_processed = 0
+        self.inventory_updated = 0
+
+    def process_order(self, order_id):
+        time.sleep(random.uniform(0.1, 0.5))
+        self.orders_processed += 1
+        print(f"Order {order_id} processed at {datetime.now()}!")
+
+    def update_inventory(self, item_id, quantity):
+        time.sleep(random.uniform(0.05, 0.2))
+        self.inventory_updated += 1
+        print(f"Inventory updated for item {item_id}, Quantity: {quantity} at {datetime.now()}")
+
+    def simulate_load(self, num_orders, num_inventory_updates):
+        threads = []
+        for order_id in range(num_orders):
+            thread = threading.Thread(target=self.process_order, args=(order_id,))
+            threads.append(thread)
+            thread.start()
+
+        for item_id in range(num_inventory_updates):
+            thread = threading.Thread(target=self.update_inventory, args=(item_id, random.randint(1, 10)))
+            threads.append(thread)
+            thread.start()
+
+        for thread in threads:
+            thread.join()
+
+def performance_testing():
+    scm_system = SCMSystem()
+    start_time = time.time()
+    total_orders = 100
+    total_inventory_updates = 50
+    print(f"Starting performance testing with {total_orders} orders and {total_inventory_updates} inventory updates...")
+    scm_system.simulate_load(total_orders, total_inventory_updates)
+    end_time = time.time()
+    total_time = end_time - start_time
+    orders_per_second = total_orders / total_time
+    inventory_per_second = total_inventory_updates / total_time
+    print("\nPerformance Metrics:")
+    print(f"Total Orders Processed: {scm_system.orders_processed}")
+    print(f"Total Inventory Updated: {scm_system.inventory_updated}")
+    print(f"Total Time Taken: {total_time:.2f} seconds")
+    print(f"Orders Processed per Second: {orders_per_second:.2f}")
+    print(f"Inventory Updated per Second: {inventory_per_second:.2f}")
+
+if __name__ == "__main__":
+    performance_testing()
